@@ -1,0 +1,89 @@
+/**
+ * BinList Styles
+ */
+
+.bin-list {
+  width: 100%;
+}
+
+.list-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 2px solid #ecf0f1;
+}
+
+.list-count {
+  font-weight: 600;
+  color: #2c3e50;
+  font-size: 14px;
+  margin: 0;
+}
+
+.bins-container {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 600px;
+  overflow-y: auto;
+}
+
+.loading-state,
+.error-state,
+.empty-state {
+  background: white;
+  border-radius: 12px;
+  padding: 40px 20px;
+  text-align: center;
+  color: #7f8c8d;
+}
+
+.loading-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.spinner {
+  border: 4px solid #ecf0f1;
+  border-top: 4px solid #667eea;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.error-state {
+  background: #fadbd8;
+  color: #c0392b;
+}
+
+.empty-state {
+  background: #ecf0f1;
+  color: #7f8c8d;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .bins-container {
+    max-height: 400px;
+  }
+
+  .loading-state,
+  .error-state,
+  .empty-state {
+    padding: 30px 15px;
+  }
+}

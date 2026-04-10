@@ -1,0 +1,167 @@
+/**
+ * RouteCard Styles
+ */
+
+.route-card {
+  background: white;
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 12px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+  border-left: 4px solid #667eea;
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+.route-card:hover {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.12);
+  transform: translateX(4px);
+}
+
+.route-card.depot {
+  border-left-color: #3498db;
+  background: linear-gradient(135deg, #ffffff 0%, #f0f4f8 100%);
+}
+
+.route-card.bin {
+  border-left-color: #667eea;
+}
+
+.route-step {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.step-number {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  font-weight: 700;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 4px rgba(102, 126, 234, 0.3);
+}
+
+.route-card.depot .step-number {
+  background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+  box-shadow: 0 2px 4px rgba(52, 152, 219, 0.3);
+}
+
+.route-details {
+  flex: 1;
+}
+
+.route-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.route-header h4 {
+  margin: 0;
+  color: #2c3e50;
+  font-size: 16px;
+}
+
+.route-type {
+  font-size: 10px;
+  font-weight: 700;
+  padding: 4px 8px;
+  border-radius: 4px;
+  background: #ecf0f1;
+  color: #34495e;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.route-type.depot {
+  background: #d6eaf8;
+  color: #2c3e50;
+}
+
+.route-type.bin {
+  background: #f3e5f5;
+  color: #6a1b9a;
+}
+
+.route-info {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.info-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+}
+
+.info-label {
+  color: #7f8c8d;
+  font-weight: 500;
+}
+
+.info-value {
+  color: #34495e;
+  font-weight: 600;
+  text-align: right;
+}
+
+.progress-bar-small {
+  height: 6px;
+  background: #ecf0f1;
+  border-radius: 3px;
+  overflow: hidden;
+  margin: 8px 0;
+}
+
+.progress-bar-small .fill {
+  height: 100%;
+  transition: width 0.3s ease;
+}
+
+.route-arrow {
+  position: absolute;
+  left: 20px;
+  bottom: -20px;
+  color: #bdc3c7;
+  font-size: 20px;
+  line-height: 1;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .route-card {
+    padding: 12px;
+    gap: 12px;
+  }
+
+  .step-number {
+    width: 36px;
+    height: 36px;
+    font-size: 14px;
+  }
+
+  .route-header h4 {
+    font-size: 14px;
+  }
+
+  .info-row {
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .info-value {
+    text-align: left;
+  }
+}

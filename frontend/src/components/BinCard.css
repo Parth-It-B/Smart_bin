@@ -1,0 +1,126 @@
+/**
+ * BinCard Styles
+ */
+
+.bin-card {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  padding: 16px;
+  margin-bottom: 12px;
+  transition: all 0.3s ease;
+  border-left: 4px solid #667eea;
+}
+
+.bin-card:hover {
+  box-shadow: 0 8px 12px rgba(0, 0, 0, 0.15);
+  transform: translateY(-2px);
+}
+
+.bin-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.bin-header h3 {
+  margin: 0;
+  color: #2c3e50;
+  font-size: 18px;
+}
+
+.status-badge {
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.status-badge.status-empty {
+  background: #d5f4e6;
+  color: #27ae60;
+}
+
+.status-badge.status-half-full {
+  background: #fdeee4;
+  color: #f39c12;
+}
+
+.status-badge.status-full {
+  background: #fadbd8;
+  color: #e74c3c;
+}
+
+.bin-body {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.fill-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.progress-bar {
+  flex: 1;
+  height: 24px;
+  background: #ecf0f1;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid #bdc3c7;
+}
+
+.progress-fill {
+  height: 100%;
+  transition: width 0.3s ease, background-color 0.3s ease;
+}
+
+.fill-level-text {
+  font-weight: 700;
+  color: #2c3e50;
+  min-width: 40px;
+  text-align: right;
+  font-size: 14px;
+}
+
+.bin-details {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.detail-item {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+}
+
+.detail-label {
+  color: #7f8c8d;
+  font-weight: 500;
+}
+
+.detail-value {
+  color: #34495e;
+  font-weight: 600;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .bin-card {
+    padding: 12px;
+    margin-bottom: 10px;
+  }
+
+  .bin-header h3 {
+    font-size: 16px;
+  }
+
+  .detail-item {
+    font-size: 12px;
+  }
+}
