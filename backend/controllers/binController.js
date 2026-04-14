@@ -5,16 +5,21 @@ import { optimizeRoute } from '../utils/routeOptimizer.js';
  * Controller for handling bin-related operations
  */
 
-// POST: Add new bin data (simulating IoT input)
-export const addBin = async (req, res) => {
+/**
+ * POST /api/bins
+ * Update bin data with device_key authentication
+ * Input: bin_id, device_key, fill_level
+ * Only updates existing bins - no new record creation
+ */
+export const updateBin = async (req, res) => {
   try {
-    const { bin_id, fill_level, lat, lng } = req.body;
+    const { bin_id, device_key, fill_level } = req.body;
 
     // Validate required fields
-    if (!bin_id || fill_level === undefined || !lat || !lng) {
+    if (!bin_id || !device_key || fill_level === undefined) {
       return res.status(400).json({
         success: false,
-        message: 'Missing required fields: bin_id, fill_level, lat, lng',
+        message: 'Missing required fields: bin_id, device_key, fill_level',
       });
     }
 
@@ -26,58 +31,42 @@ export const addBin = async (req, res) => {
       });
     }
 
-    // Check if bin already exists (update if it does)
-    let bin = await Bin.findOne({ bin_id });
+    // Find bin by bin_id
+    const bin = await Bin.findOne({ bin_id });
 
-    // Determine status based on fill level
-    let status = 'empty';
-    if (fill_level > 80) status = 'full';
-    else if (fill_level > 40) status = 'half-full';
-
-    if (bin) {
-      // Update existing bin
-      bin.fill_level = fill_level;
-      bin.lat = lat;
-      bin.lng = lng;
-      bin.status = status;
-      bin.timestamp = new Date();
-
-      // Alert if bin is full
-      if (fill_level > 80) {
-        console.log(`🚨 ALERT: Bin ${bin_id} is FULL (${fill_level}%)`);
-      }
-
-      await bin.save();
-      return res.status(200).json({
-        success: true,
-        message: 'Bin updated successfully',
-        data: bin,
+    if (!bin) {
+      return res.status(404).json({
+        success: false,
+        message: 'Bin not found. Please register it first at POST /api/dustbins',
       });
     }
 
-    // Create new bin
-    const newBin = new Bin({
-      bin_id,
-      fill_level,
-      lat,
-      lng,
-      status,
-      timestamp: new Date(),
-    });
-
-    if (fill_level > 80) {
-      console.log(`🚨 ALERT: New Bin ${bin_id} is FULL (${fill_level}%)`);
+    // Validate device_key (authentication)
+    if (bin.device_key !== device_key) {
+      return res.status(401).json({
+        success: false,
+        message: 'Invalid device_key. Authentication failed.',
+      });
     }
 
-    await newBin.save();
+    // Update bin data
+    bin.fill_level = fill_level;
+    bin.last_updated = new Date();
 
-    return res.status(201).json({
+    // Alert if bin is full
+    if (fill_level > 80) {
+      console.log(`🚨 ALERT: Bin ${bin_id} is FULL (${fill_level}%)`);
+    }
+
+    await bin.save();
+
+    return res.status(200).json({
       success: true,
-      message: 'Bin added successfully',
-      data: newBin,
+      message: 'Bin updated successfully',
+      data: bin,
     });
   } catch (error) {
-    console.error('Error adding bin:', error);
+    console.error('Error updating bin:', error);
     return res.status(500).json({
       success: false,
       message: 'Internal server error',

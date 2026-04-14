@@ -6,6 +6,7 @@ import { createDummyBins } from './utils/dummyData.js';
 
 // Import routes
 import binsRoutes from './routes/bins.js';
+import dustbinsRoutes from './routes/dustbins.js';
 import routesRoutes from './routes/routes.js';
 
 // Load environment variables
@@ -48,6 +49,9 @@ app.get('/api/health', (req, res) => {
 
 // Bins endpoints
 app.use('/api/bins', binsRoutes);
+
+// Dustbin registration endpoints
+app.use('/api/dustbins', dustbinsRoutes);
 
 // Route optimization endpoint
 app.use('/api/route', routesRoutes);

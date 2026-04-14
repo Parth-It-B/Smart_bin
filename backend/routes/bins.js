@@ -1,6 +1,6 @@
 import express from 'express';
 import {
-  addBin,
+  updateBin,
   getAllBins,
   getFullBins,
   getOptimizedRoute,
@@ -11,11 +11,12 @@ import {
 const router = express.Router();
 
 /**
- * Bin Routes
+ * Bin Update Routes
+ * For real-time sensor data updates and bin management
  */
 
-// POST /api/bins - Add new bin data
-router.post('/', addBin);
+// POST /api/bins - Update bin with device_key authentication
+router.post('/', updateBin);
 
 // GET /api/bins - Get all bins
 router.get('/', getAllBins);
@@ -26,31 +27,8 @@ router.get('/stats', getDashboardStats);
 // GET /api/bins/full - Get full bins (fill_level > 80)
 router.get('/full', getFullBins);
 
-// GET /api/bins/:bin_id - Get specific bin (optional)
-router.get('/:bin_id', async (req, res) => {
-  try {
-    const Bin = (await import('../models/Bin.js')).default;
-    const bin = await Bin.findOne({ bin_id: req.params.bin_id });
-
-    if (!bin) {
-      return res.status(404).json({
-        success: false,
-        message: 'Bin not found',
-      });
-    }
-
-    res.status(200).json({
-      success: true,
-      data: bin,
-    });
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: 'Internal server error',
-      error: error.message,
-    });
-  }
-});
+// GET /api/route - Get optimized collection route
+router.get('/route', getOptimizedRoute);
 
 // DELETE /api/bins/:bin_id - Clear a bin
 router.delete('/:bin_id', clearBin);

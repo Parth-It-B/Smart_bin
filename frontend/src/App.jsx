@@ -1,15 +1,23 @@
 import React, { useState } from 'react';
 import Dashboard from './pages/Dashboard';
 import RouteOptimization from './pages/RouteOptimization';
+import DustbinForm from './components/DustbinForm';
 import './App.css';
 
 /**
  * Main App Component
- * Navigation and routing between Dashboard and Route Optimization
+ * Navigation and routing between Dashboard, Route Optimization, and Dustbin Registration
  */
 
 function App() {
   const [currentPage, setCurrentPage] = useState('dashboard');
+  const [refreshTrigger, setRefreshTrigger] = useState(0);
+
+  const handleRegistrationSuccess = () => {
+    // Trigger dashboard refresh when a new bin is registered
+    setRefreshTrigger(prev => prev + 1);
+    setCurrentPage('dashboard');
+  };
 
   return (
     <div className="app-container">
@@ -24,7 +32,13 @@ function App() {
               className={`nav-link ${currentPage === 'dashboard' ? 'active' : ''}`}
               onClick={() => setCurrentPage('dashboard')}
             >
-              � Dashboard
+              📊 Dashboard
+            </button>
+            <button
+              className={`nav-link ${currentPage === 'register' ? 'active' : ''}`}
+              onClick={() => setCurrentPage('register')}
+            >
+              🗑️ Register Bin
             </button>
             <button
               className={`nav-link ${currentPage === 'route' ? 'active' : ''}`}
@@ -37,7 +51,8 @@ function App() {
       </nav>
 
       <div className="app-content">
-        {currentPage === 'dashboard' && <Dashboard />}
+        {currentPage === 'dashboard' && <Dashboard key={refreshTrigger} />}
+        {currentPage === 'register' && <DustbinForm onRegistrationSuccess={handleRegistrationSuccess} />}
         {currentPage === 'route' && <RouteOptimization />}
       </div>
 

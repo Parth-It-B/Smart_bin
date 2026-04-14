@@ -8,38 +8,22 @@ const binSchema = new mongoose.Schema({
   bin_id: {
     type: String,
     required: true,
-    unique: true,
-    trim: true,
+    unique: true
   },
+  ward: String,
+  area: String,
+  device_key: String,
   fill_level: {
     type: Number,
-    required: true,
-    min: 0,
-    max: 100,
-    default: 0,
+    default: 0
   },
-  lat: {
-    type: Number,
-    required: true,
-  },
-  lng: {
-    type: Number,
-    required: true,
-  },
-  status: {
-    type: String,
-    enum: ['empty', 'half-full', 'full'],
-    default: 'empty',
-  },
-  last_emptied: {
+  lat: Number,
+  lng: Number,
+  last_updated: {
     type: Date,
-    default: null,
-  },
-  timestamp: {
-    type: Date,
-    default: Date.now,
-  },
-}, { timestamps: true });
+    default: Date.now
+  }
+});
 
 // Index for efficient real-time queries
 binSchema.index({ fill_level: -1 });
