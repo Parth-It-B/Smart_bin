@@ -5,7 +5,7 @@ import axios from 'axios';
  * Handles all communication with the backend server
  */
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5001/api';
 
 const apiClient = axios.create({
   baseURL: API_BASE_URL,
@@ -17,24 +17,25 @@ const apiClient = axios.create({
 
 /**
  * Dustbin Registration API Endpoints
+ * Note: Dustbin registration is handled through bins API
  */
 
 export const dustbinAPI = {
-  // Register a new dustbin
+  // Register a new dustbin (using bins endpoint)
   registerDustbin: (ward, area, lat, lng) =>
-    apiClient.post('/dustbins', { ward, area, lat, lng }),
+    apiClient.post('/bins', { ward, area, lat, lng }),
 
-  // Get all dustbins
+  // Get all dustbins (using bins endpoint)
   getAllDustbins: () =>
-    apiClient.get('/dustbins'),
+    apiClient.get('/bins'),
 
-  // Get specific dustbin
+  // Get specific dustbin (using bins endpoint)
   getDustbinById: (bin_id) =>
-    apiClient.get(`/dustbins/${bin_id}`),
+    apiClient.get(`/bins/${bin_id}`),
 
-  // Delete dustbin
+  // Delete dustbin (using bins endpoint)
   deleteDustbin: (bin_id) =>
-    apiClient.delete(`/dustbins/${bin_id}`),
+    apiClient.delete(`/bins/${bin_id}`),
 };
 
 /**
@@ -71,7 +72,7 @@ export const binsAPI = {
 export const routeAPI = {
   // Get optimized route
   getOptimizedRoute: () =>
-    apiClient.get('/bins/route'),
+    apiClient.get('/route'),
 };
 
 /**

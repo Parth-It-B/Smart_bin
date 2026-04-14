@@ -6,7 +6,6 @@ import { createDummyBins } from './utils/dummyData.js';
 
 // Import routes
 import binsRoutes from './routes/bins.js';
-import dustbinsRoutes from './routes/dustbins.js';
 import routesRoutes from './routes/routes.js';
 
 // Load environment variables
@@ -49,9 +48,6 @@ app.get('/api/health', (req, res) => {
 
 // Bins endpoints
 app.use('/api/bins', binsRoutes);
-
-// Dustbin registration endpoints
-app.use('/api/dustbins', dustbinsRoutes);
 
 // Route optimization endpoint
 app.use('/api/route', routesRoutes);
@@ -110,7 +106,7 @@ app.listen(PORT, () => {
   console.log('╚════════════════════════════════════════════╝');
   console.log('\n');
   console.log(`🚀 Server running on: http://localhost:${PORT}`);
-  console.log(`📊 Database: ${MONGO_URI}`);
+  console.log(`📊 Database: Connected to MongoDB`);
   console.log(`📝 Environment: ${process.env.NODE_ENV || 'development'}`);
   console.log('\n');
   console.log('📚 Available Endpoints:');
