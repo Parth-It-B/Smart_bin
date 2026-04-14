@@ -2,11 +2,13 @@ import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import mongoose from 'mongoose';
+import Bin from './models/Bin.js';
 import { createDummyBins } from './utils/dummyData.js';
 
 // Import routes
 import binsRoutes from './routes/bins.js';
 import routesRoutes from './routes/routes.js';
+import dustbinsRoutes from './routes/dustbins.js';
 
 // Load environment variables
 dotenv.config();
@@ -49,6 +51,9 @@ app.get('/api/health', (req, res) => {
 // Bins endpoints
 app.use('/api/bins', binsRoutes);
 
+// Dustbins endpoints
+app.use('/api/dustbins', dustbinsRoutes);
+
 // Route optimization endpoint
 app.use('/api/route', routesRoutes);
 
@@ -59,6 +64,24 @@ app.use('/api/route', routesRoutes);
 // POST /api/init - Initialize database with dummy data
 app.post('/api/init', async (req, res) => {
   try {
+    // Prevent accidental repeated initialization in production
+    if (process.env.NODE_ENV === 'production' && process.env.ENABLE_DEMO_INIT !== 'true') {
+      return res.status(403).json({
+        success: false,
+        message:
+          'Demo initialization is disabled in production. Set ENABLE_DEMO_INIT=true to allow this action.',
+      });
+    }
+
+    const existingCount = await Bin.countDocuments();
+    if (existingCount > 0) {
+      return res.status(200).json({
+        success: true,
+        message: 'Database already contains demo data. Initialization skipped.',
+        existingBins: existingCount,
+      });
+    }
+
     await createDummyBins();
     res.json({
       success: true,

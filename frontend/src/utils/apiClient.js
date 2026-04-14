@@ -23,7 +23,7 @@ const apiClient = axios.create({
 export const dustbinAPI = {
   // Register a new dustbin (using bins endpoint)
   registerDustbin: (ward, area, lat, lng) =>
-    apiClient.post('/bins', { ward, area, lat, lng }),
+    apiClient.post('/dustbins', { ward, area, lat, lng }),
 
   // Get all dustbins (using bins endpoint)
   getAllDustbins: () =>
