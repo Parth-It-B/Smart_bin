@@ -24,23 +24,8 @@ const binLocations = [
   { lat: 19.1384, lng: 72.8427, area: 'Thane' },
 ];
 
-/**
- * Generate random fill level
- * Higher chance of lower fill levels (more realistic)
- */
-function getRandomFillLevel() {
-  const random = Math.random();
-  if (random < 0.5) {
-    // 50% chance: 0-40% (empty)
-    return Math.floor(Math.random() * 40);
-  } else if (random < 0.8) {
-    // 30% chance: 40-80% (half-full)
-    return 40 + Math.floor(Math.random() * 40);
-  } else {
-    // 20% chance: 80-100% (full)
-    return 80 + Math.floor(Math.random() * 20);
-  }
-}
+// Fixed fill levels for static demo data
+const fixedFillLevels = [25, 45, 10, 85, 60, 30, 90, 15, 70, 5, 80, 40, 55, 20, 95];
 
 /**
  * Create dummy bins in database
@@ -54,7 +39,7 @@ export async function createDummyBins() {
     // Create new dummy bins
     const dummyBins = binLocations.map((location, index) => ({
       bin_id: `BIN-${String(index + 1).padStart(3, '0')}`,
-      fill_level: getRandomFillLevel(),
+      fill_level: fixedFillLevels[index],
       lat: location.lat,
       lng: location.lng,
       timestamp: new Date(Date.now() - Math.random() * 24 * 60 * 60 * 1000), // Random time in last 24 hours

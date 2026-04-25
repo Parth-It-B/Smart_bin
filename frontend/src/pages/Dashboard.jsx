@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import StatCard from '../components/StatCard';
 import BinList from '../components/BinList';
-import SimpleMap from '../components/SimpleMap';
 import { binsAPI, handleError, initAPI } from '../utils/apiClient';
 import './Dashboard.css';
+import LiveMap from "../components/LiveMap";
 
 /**
  * Dashboard Page
@@ -22,7 +22,7 @@ const Dashboard = () => {
   useEffect(() => {
     fetchAllData();
     // Refresh every 5 seconds for live updates
-    const interval = setInterval(fetchAllData, 5000);
+    const interval = setInterval(fetchAllData, 20000);
     return () => clearInterval(interval);
   }, []);
 
@@ -117,7 +117,7 @@ const Dashboard = () => {
       <div className="dashboard-content">
         <div className="dashboard-section">
           <h2>🗺️ Bin Distribution Map</h2>
-          <SimpleMap bins={bins} highlightFull={true} />
+         <LiveMap bins={bins} />
         </div>
 
         <div className="dashboard-section">
