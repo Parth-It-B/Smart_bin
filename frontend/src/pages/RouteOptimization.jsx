@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import RouteCard from '../components/RouteCard';
-import SimpleMap from '../components/SimpleMap';
+import LiveMap from "../components/LiveMap";
 import { binsAPI, routeAPI, handleError } from '../utils/apiClient';
 import './RouteOptimization.css';
 
@@ -16,25 +16,59 @@ const RouteOptimization = () => {
   const [fullBins, setFullBins] = useState([]);
 
   const handleOptimizeRoute = async () => {
-    try {
-      setLoading(true);
-      setError(null);
+  try {
+    setLoading(true);
+    setError(null);
 
-      // Fetch full bins and optimized route
-      const [binsRes, routeRes] = await Promise.all([
-        binsAPI.getFullBins(),
-        routeAPI.getOptimizedRoute(),
-      ]);
+    const isDemo = localStorage.getItem("demoMode") === "true";
 
-      setFullBins(binsRes.data.data || []);
-      setRouteData(routeRes.data);
-    } catch (err) {
-      setError(handleError(err));
-      console.error('Error optimizing route:', err);
-    } finally {
-      setLoading(false);
+    // DEMO MODE
+    if (isDemo) {
+      const demoBins =
+        JSON.parse(localStorage.getItem("demoBins")) || [];
+
+      const full = demoBins.filter(bin => bin.fill_level >= 80);
+
+      setFullBins(full);
+
+      const route = full.map((bin, index) => ({
+        ...bin,
+        stop_number: index + 1,
+        distance_from_previous: (Math.random() * 1.5 + 0.3).toFixed(2)
+      }));
+
+      setRouteData({
+        route: {
+          route,
+          summary: {
+            total_bins: full.length,
+            total_distance_km: (
+              full.length * 1.4 + Math.random() * 2
+            ).toFixed(2),
+            estimated_time_minutes: full.length * 6
+          }
+        }
+      });
+
+      return;
     }
-  };
+
+    // NORMAL REAL MODE
+    const [binsRes, routeRes] = await Promise.all([
+      binsAPI.getFullBins(),
+      routeAPI.getOptimizedRoute(),
+    ]);
+
+    setFullBins(binsRes.data.data || []);
+    setRouteData(routeRes.data);
+
+  } catch (err) {
+    setError(handleError(err));
+    console.error("Error optimizing route:", err);
+  } finally {
+    setLoading(false);
+  }
+};
 
   const hasFullBins = fullBins.length > 0;
   const route = routeData?.route?.route || [];
@@ -88,8 +122,8 @@ const RouteOptimization = () => {
             {/* Map Visualization */}
             <div className="route-section">
               <h2>📍 Route Visualization</h2>
-              <SimpleMap bins={fullBins} highlightFull={false} routes={route} />
-            </div>
+              <LiveMap bins={fullBins} routes={route} />
+            </div>  
 
             {/* Detailed Route Steps */}
             <div className="route-section">
