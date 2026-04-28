@@ -19,7 +19,7 @@ const Dashboard = () => {
       if (localStorage.getItem("demoMode") !== "true") {
         fetchAllData();
       }
-    }, 20000);
+    }, 5000);
 
     return () => clearInterval(interval);
   }, []);

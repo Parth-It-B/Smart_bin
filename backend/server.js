@@ -2,6 +2,8 @@ import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import mongoose from 'mongoose';
+import axios from 'axios';
+
 import Bin from './models/Bin.js';
 import { createDummyBins } from './utils/dummyData.js';
 
@@ -15,7 +17,14 @@ dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 5000;
-const MONGO_URI = process.env.MONGO_URI || 'mongodb://localhost:27017/smart-waste-management';
+const MONGO_URI =
+  process.env.MONGO_URI ||
+  'mongodb://localhost:27017/smart-waste-management';
+
+// Blynk Config
+const BLYNK_TOKEN = 'VZ77pbgtJ7GEe10ljvgHWy9k5dOekDUD';
+const BIN_ID = 'NWY3MXHR0';
+const BLYNK_PIN = 'v0';
 
 // Middleware
 app.use(cors());
@@ -23,7 +32,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 /**
- * MONGODB CONNECTION
+ * MongoDB Connection
  */
 mongoose
   .connect(MONGO_URI)
@@ -39,7 +48,7 @@ mongoose
  * API ROUTES
  */
 
-// Health check endpoint
+// Health Check
 app.get('/api/health', (req, res) => {
   res.json({
     status: 'Server is running',
@@ -48,59 +57,94 @@ app.get('/api/health', (req, res) => {
   });
 });
 
-// Bins endpoints
+// Main Routes
 app.use('/api/bins', binsRoutes);
-
-// Dustbins endpoints
 app.use('/api/dustbins', dustbinsRoutes);
-
-// Route optimization endpoint
 app.use('/api/route', routesRoutes);
 
 /**
- * INITIALIZATION ROUTE
+ * Demo Initialization
  */
-
-// POST /api/init - Initialize database with dummy data
 app.post('/api/init', async (req, res) => {
   try {
-    // Prevent accidental repeated initialization in production
-    if (process.env.NODE_ENV === 'production' && process.env.ENABLE_DEMO_INIT !== 'true') {
+    if (
+      process.env.NODE_ENV === 'production' &&
+      process.env.ENABLE_DEMO_INIT !== 'true'
+    ) {
       return res.status(403).json({
         success: false,
         message:
-          'Demo initialization is disabled in production. Set ENABLE_DEMO_INIT=true to allow this action.',
+          'Demo initialization disabled in production.',
       });
     }
 
     const existingCount = await Bin.countDocuments();
+
     if (existingCount > 0) {
       return res.status(200).json({
         success: true,
-        message: 'Database already contains demo data. Initialization skipped.',
+        message: 'Database already has data.',
         existingBins: existingCount,
       });
     }
 
     await createDummyBins();
+
     res.json({
       success: true,
-      message: 'Database initialized with dummy data',
+      message: 'Dummy data inserted successfully',
     });
   } catch (error) {
     res.status(500).json({
       success: false,
-      message: 'Error initializing database',
+      message: 'Initialization failed',
       error: error.message,
     });
   }
 });
 
 /**
+ * BLYNK LIVE DATA SYNC
+ */
+async function syncBlynkData() {
+  try {
+    const url =
+      `https://blynk.cloud/external/api/get?token=${BLYNK_TOKEN}&${BLYNK_PIN}`;
+
+    const response = await axios.get(url);
+
+    const fillLevel = Number(response.data);
+
+    console.log('📡 Blynk Reading:', fillLevel);
+
+    await Bin.findOneAndUpdate(
+      { bin_id: BIN_ID },
+      {
+        bin_id: BIN_ID,
+        fill_level: fillLevel,
+        area: 'Chembur',
+        lat: 19.0522,
+        lng: 72.9005,
+        updatedAt: new Date(),
+      },
+      {
+        new: true,
+        upsert: true,
+      }
+    );
+  } catch (error) {
+    console.log('❌ Blynk Error:', error.message);
+  }
+}
+
+// Fetch Blynk every 5 sec
+setInterval(syncBlynkData, 5000);
+
+/**
  * ERROR HANDLING
  */
 
-// 404 Not Found
+// 404
 app.use((req, res) => {
   res.status(404).json({
     success: false,
@@ -109,9 +153,10 @@ app.use((req, res) => {
   });
 });
 
-// Global error handler
+// Global Error
 app.use((err, req, res, next) => {
   console.error('❌ Error:', err);
+
   res.status(500).json({
     success: false,
     message: 'Internal Server Error',
@@ -128,18 +173,9 @@ app.listen(PORT, () => {
   console.log('║  Smart Waste Management System - Backend  ║');
   console.log('╚════════════════════════════════════════════╝');
   console.log('\n');
-  console.log(`🚀 Server running on: http://localhost:${PORT}`);
-  console.log(`📊 Database: Connected to MongoDB`);
-  console.log(`📝 Environment: ${process.env.NODE_ENV || 'development'}`);
-  console.log('\n');
-  console.log('📚 Available Endpoints:');
-  console.log('   GET  /api/health              - Health check');
-  console.log('   POST /api/bins                - Add bin data');
-  console.log('   GET  /api/bins                - Get all bins');
-  console.log('   GET  /api/bins/stats          - Get dashboard stats');
-  console.log('   GET  /api/bins/full           - Get full bins');
-  console.log('   GET  /api/route               - Get optimized route');
-  console.log('   POST /api/init                - Initialize with dummy data');
+  console.log(`🚀 Server running on port ${PORT}`);
+  console.log('📊 MongoDB Connected');
+  console.log('📡 Blynk Sync Active (5 sec)');
   console.log('\n');
 });
 
